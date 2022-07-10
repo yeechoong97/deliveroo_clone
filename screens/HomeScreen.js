@@ -1,7 +1,8 @@
-import { Image, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useLayoutEffect } from 'react'
 import { useNavigation } from "@react-navigation/native"
 import { ChevronDownIcon, UserIcon, SearchIcon, AdjustmentsIcon } from 'react-native-heroicons/outline'
+import Category from '../components/Category'
 
 const HomeScreen = () => {
 
@@ -36,6 +37,13 @@ const HomeScreen = () => {
                 </View>
                 <AdjustmentsIcon size={24} color="#00CCBB" />
             </View>
+
+            {/* Body */}
+            <ScrollView className="bg-gray-100 flex-1">
+                {/* Category Component */}
+                <Category />
+                {/* Featured Rows */}
+            </ScrollView>
 
         </SafeAreaView>
     )
