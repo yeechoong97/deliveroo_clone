@@ -1,19 +1,30 @@
 import { View, Text, ScrollView } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import CategoryCard from './CategoryCard'
+import client from '../sanity';
 
 const Category = () => {
+
+    const [categories, setCategories] = useState([]);
+
+    useEffect(() => {
+        client.fetch(`
+            *[_type == "category"]
+        `).then((data) => {
+            setCategories(data);
+        })
+    }, [])
+
     return (
         <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{ paddingHorizontal: 15, paddingTop: 10 }}>
-            <CategoryCard title="KFC" imgUrl="https://links.papareact.com/gn7" />
-            <CategoryCard title="KFC" imgUrl="https://links.papareact.com/gn7" />
-            <CategoryCard title="KFC" imgUrl="https://links.papareact.com/gn7" />
-            <CategoryCard title="KFC" imgUrl="https://links.papareact.com/gn7" />
-            <CategoryCard title="KFC" imgUrl="https://links.papareact.com/gn7" />
-            <CategoryCard title="KFC" imgUrl="https://links.papareact.com/gn7" />
+            {
+                categories?.map((category) => (
+                    <CategoryCard key={category._id} title={category.name} imgUrl={category.image} />
+                ))
+            }
         </ScrollView>
     )
 }

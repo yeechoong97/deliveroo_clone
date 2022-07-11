@@ -1,19 +1,35 @@
-import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
-import React, { useLayoutEffect } from 'react'
+import { Image, SafeAreaView, ScrollView, Text, TextInput, View } from 'react-native'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { useNavigation } from "@react-navigation/native"
 import { ChevronDownIcon, UserIcon, SearchIcon, AdjustmentsIcon } from 'react-native-heroicons/outline'
 import Category from '../components/Category'
 import FeatureRow from '../components/FeatureRow'
+import client from '../sanity'
 
 const HomeScreen = () => {
 
     const navigation = useNavigation();
+    const [featuredCategories, setFeaturedCategories] = useState([]);
 
     useLayoutEffect(() => {
         navigation.setOptions({
             headerShown: false
         })
     }, [])
+
+
+    useEffect(() => {
+        client.fetch(`
+            *[_type == "featured"] {
+                ...,
+                restaurants[]-> {
+                    ...,
+                    dishes[]->
+                }
+            }`).then(data => {
+            setFeaturedCategories(data);
+        })
+    }, []);
 
     return (
         <SafeAreaView className="bg-white pt-3 flex-1">
@@ -44,9 +60,15 @@ const HomeScreen = () => {
                 {/* Category Component */}
                 <Category />
                 {/* Featured Rows */}
-                <FeatureRow id="123" title="Featured" description="Paid placement froms our partners" featuredCategory="featured" />
-                <FeatureRow id="1234" title="Tasty Discounts" description="Everyone's been enjoying these juicy discounts!" featuredCategory="discounts" />
-                <FeatureRow id="12365" title="Offers near you!" description="Why not support your local restaurant tonight!" featuredCategory="offers" />
+
+                {featuredCategories?.map((category) => (
+                    <FeatureRow
+                        key={category._id}
+                        id={category._id}
+                        title={category.name}
+                        description={category.short_description}
+                    />
+                ))}
             </ScrollView>
 
         </SafeAreaView>
